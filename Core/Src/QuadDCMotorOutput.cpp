@@ -1,10 +1,3 @@
-/*
- * QuadDCMotorOutput.cpp
- *
- *  Created on: Oct 26, 2025
- *      Author: stuyvenstein
- */
-
 #include "QuadDCMotorOutput.h"
 
 QuadDCMotorOutput::QuadDCMotorOutput(TIM_HandleTypeDef *timer3) {
@@ -17,64 +10,84 @@ QuadDCMotorOutput::QuadDCMotorOutput(TIM_HandleTypeDef *timer3) {
 	HAL_TIM_PWM_Start(timer3, TIM_CHANNEL_2);
 	HAL_TIM_PWM_Start(timer3, TIM_CHANNEL_3);
 	HAL_TIM_PWM_Start(timer3, TIM_CHANNEL_4);
-
 }
 
 void QuadDCMotorOutput::UpdateInputDuty(float dutyCycle, UAVControlChannel inputChannel){
-	float dutyDiff = 0.0f;
 	switch (inputChannel) {
 		case UAVC_NONE:
 			break;
 		case UAVC_LINEAR_PITCH:
-			dutyDiff = GetDutyDifference(dutyCycle, _pitchUpdateDuty);
-			if(dutyDiff >= 0.01f){
-				_pitchUpdateDuty = dutyCycle;
-				updateOutputDuty();
-			}
+			_pitchUpdateDuty = dutyCycle;
 			break;
 		case UAVC_LINEAR_ROLL:
-			dutyDiff = GetDutyDifference(dutyCycle, _rollUpdateDuty);
-			if(dutyDiff >= 0.01f){
-				_rollUpdateDuty = dutyCycle;
-				updateOutputDuty();
-			}
+			_rollUpdateDuty = dutyCycle;
 			break;
 		case UAVC_LINEAR_THROTTLE:
-			dutyDiff = GetDutyDifference(dutyCycle, _throttleUpdateDuty);
-			if(dutyDiff >= 0.01f){
-				_throttleUpdateDuty = dutyCycle;
-				updateOutputDuty();
-			}
+			_throttleUpdateDuty = std::clamp((dutyCycle - _throttleBottomOffset), 0.0f, 100.0f);
 			break;
 		case UAVC_LINEAR_YAW:
-			dutyDiff = GetDutyDifference(dutyCycle, _yawUpdateDuty);
-			if(dutyDiff >= 0.01f){
-				_yawUpdateDuty = dutyCycle;
-				updateOutputDuty();
-			}
+			_yawUpdateDuty = dutyCycle;
 			break;
 		case UAVC_LINEAR_AUTOPILOT:
-			dutyDiff = GetDutyDifference(dutyCycle, _autoPilotUpdateDuty);
-			if(dutyDiff >= 0.01f){
-				_autoPilotUpdateDuty = dutyCycle;
-				//updateOutputDuty();
-			}
+			_autoPilotUpdateDuty = dutyCycle;
 			break;
 	}
+	updateOutputDuty();
 }
 
-float GetDutyDifference(float newDuty, float oldDuty){
-	float result = 0.0f;
-	if(newDuty > oldDuty){
-		result = newDuty - oldDuty;
-	}else{
-		result = oldDuty - newDuty;
-	}
-	return result;
-}
-
+//Ignoring autopilot for now
 void QuadDCMotorOutput::updateOutputDuty(){
-	TIM3->CCR1 = (_dutyCounterRange * (_rollUpdateDuty / 100.0f)) - 1;
+
+	// All rotors start with throttle
+	if(_throttleUpdateDuty >= 1.0f){
+		float frontLeftRotorDuty = _throttleUpdateDuty;
+		float frontRightRotorDuty = _throttleUpdateDuty;
+		float rearLeftRotorDuty = _throttleUpdateDuty;
+		float rearRightRotorDuty = _throttleUpdateDuty;
+
+		// Get pitch, yaw and roll offsets from center
+	    float pitchCenterOffset =  _pitchUpdateDuty - 50.0f;
+	    float rollCenterOffset =  _rollUpdateDuty - 50.0f;
+	    float yawCenterOffset =  _yawUpdateDuty - 50.0f;
+
+
+	    // Set the actual values we want to alter the throttle of each rotor with from yaw, pitch and roll
+	    float pitchFrontDifference = -pitchCenterOffset * _pitchSensitivity;
+	    float pitchRearDifference = pitchCenterOffset * _pitchSensitivity;
+
+	    float rollLeftDifference = rollCenterOffset * _rollSensitivity;
+	    float rollRightDifference = -rollCenterOffset * _rollSensitivity;
+
+	    float yawLeftDifference = -yawCenterOffset * _yawSensitivity;
+	    float yawRightDifference = yawCenterOffset * _yawSensitivity;
+
+	    // Increment the throttle values using the calculated adjustments from other channels
+	    frontLeftRotorDuty = frontLeftRotorDuty + yawLeftDifference;
+	    frontRightRotorDuty = frontRightRotorDuty + yawRightDifference;
+	    rearLeftRotorDuty = rearLeftRotorDuty + yawRightDifference;
+	    rearRightRotorDuty = rearRightRotorDuty + yawLeftDifference;
+
+	    frontLeftRotorDuty = frontLeftRotorDuty + rollLeftDifference;
+	    frontRightRotorDuty = frontRightRotorDuty + rollRightDifference;
+	    rearLeftRotorDuty = rearLeftRotorDuty + rollLeftDifference;
+	    rearRightRotorDuty = rearRightRotorDuty + rollRightDifference;
+
+	    frontLeftRotorDuty = frontLeftRotorDuty + pitchFrontDifference;
+	    frontRightRotorDuty = frontRightRotorDuty + pitchFrontDifference;
+	    rearLeftRotorDuty = rearLeftRotorDuty + pitchRearDifference;
+	    rearRightRotorDuty = rearRightRotorDuty + pitchRearDifference;
+
+	    // Output the final values as duty cycle on our timer
+		TIM3->CCR1 = (_dutyCounterRange * (frontLeftRotorDuty / 100.0f)) - 1;
+		TIM3->CCR2 = (_dutyCounterRange * (frontRightRotorDuty / 100.0f)) - 1;
+		TIM3->CCR3 = (_dutyCounterRange * (rearLeftRotorDuty / 100.0f)) - 1;
+		TIM3->CCR4 = (_dutyCounterRange * (rearRightRotorDuty / 100.0f)) - 1;
+	}else{ // Dont do anything if there's not enough throttle
+		TIM3->CCR1 = 0;
+		TIM3->CCR2 = 0;
+		TIM3->CCR3 = 0;
+		TIM3->CCR4 = 0;
+	}
 }
 
 QuadDCMotorOutput::~QuadDCMotorOutput() {

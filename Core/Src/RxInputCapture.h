@@ -16,34 +16,25 @@
 
 struct InputCaptureChannel{
 public:
-	TIM_HandleTypeDef* Timer;
-	uint32_t Channel;
 	bool Invert = false;
 	uint32_t LowTick = 0;
 	uint32_t HighTick = 0;
 	UAVControlChannel ControlChannel;
-	GPIO_TypeDef* GpioPort;
-	uint16_t GpioPin;
 };
 
 float GetRcChannelDutyFactor(uint32_t, InputCaptureChannel*);
 
-class RcReceiverMixer {
+class RxInputCapture {
 public:
-	//RcReceiverMixer(TIM_HandleTypeDef*, TIM_HandleTypeDef*, QuadDCMotorOutput*);
-	RcReceiverMixer(InputCaptureChannel*, uint8_t, QuadDCMotorOutput*);
-	//
-	virtual ~RcReceiverMixer();
+	RxInputCapture(TIM_HandleTypeDef*);
+	virtual ~RxInputCapture();
 	void InputCaptureCallback(TIM_HandleTypeDef*);
 private:
-	uint32_t ** _timerDmaBuffer;
-	InputCaptureChannel * _icChannels;
-	uint8_t _icChannelCnt;
-//	RcReceiverChannel _rollCapture;
-//	RcReceiverChannel _pitchCapture;
-//	RcReceiverChannel _throttleCapture;
-//	RcReceiverChannel _yawCapture;
-//	RcReceiverChannel _autoPilotCapture;
+	InputCaptureChannel * _rollCapture;
+	InputCaptureChannel * _pitchCapture;
+	InputCaptureChannel * _throttleCapture;
+	InputCaptureChannel * _yawCapture;
+	InputCaptureChannel * _autoPilotCapture;
 	QuadDCMotorOutput * _motorOutput;
 };
 

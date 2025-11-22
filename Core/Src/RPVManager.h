@@ -1,12 +1,12 @@
 /*
- * UAVMixer.h
+ * AVManager.h
  *
  *  Created on: Oct 11, 2025
  *      Author: stuyvenstein
  */
 
-#ifndef UAVMIXER_H_
-#define UAVMIXER_H_
+#ifndef RPVMANAGER_H_
+#define RPVMANAGER_H_
 
 #include "stm32f4xx_hal.h"
 
@@ -14,8 +14,8 @@
 extern "C" {
 #endif
 
-void UAVStartup(TIM_HandleTypeDef*, TIM_HandleTypeDef*, TIM_HandleTypeDef*);
-void UAVTick();
+void RPVStartup(TIM_HandleTypeDef*t2, TIM_HandleTypeDef*t5,TIM_HandleTypeDef*t3);
+void RPVTick();
 
 #ifdef __cplusplus
 }

@@ -1,16 +1,10 @@
-/*
- * QuadDCMotorOutput.h
- *
- *  Created on: Oct 26, 2025
- *      Author: stuyvenstein
- */
-
 #ifndef QUADDCMOTOROUTPUT_H_
 #define QUADDCMOTOROUTPUT_H_
 
 #include "stm32f4xx_hal.h"
+#include <algorithm>
 
-float GetDutyDifference(float, float);
+//float GetDutyDifference(float, float);
 
 enum UAVControlChannel{
 	UAVC_NONE = 0,
@@ -33,7 +27,13 @@ private:
 	float _throttleUpdateDuty = 0.0f;
 	float _yawUpdateDuty = 0.0f;
 	float _autoPilotUpdateDuty = 0.0f;
+	float _pitchSensitivity = 0.5f;
+	float _rollSensitivity = 0.5f;
+	float _throttleSensitivity = 0.5f;
+	float _yawSensitivity = 0.5f;
+	float _throttleBottomOffset = 13.0f;
+
 	uint32_t _dutyCounterRange;
 };
 
-#endif /* SRC_QUADDCMOTOROUTPUT_H_ */
+#endif
