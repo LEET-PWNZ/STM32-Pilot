@@ -6,12 +6,12 @@
 
 class RPVRcRXInputCapture {
 public:
-	RPVRcRXInputCapture(RemoteVehicleType, RPVInputCaptureChannel*);
+	RPVRcRXInputCapture(RPVTypeConfiguration*, RPVInputCaptureChannel*);
 	virtual ~RPVRcRXInputCapture();
 	void InputCaptureCallback(TIM_HandleTypeDef*);
 private:
 	RPVInputCaptureChannel* _inputCaptureChannels;
-	RemoteVehicleType _vehicleType;
+	RPVTypeConfiguration* _vehicleType;
 };
 
 #endif

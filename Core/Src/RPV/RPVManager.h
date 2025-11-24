@@ -7,11 +7,11 @@
 
 class RPVManager {
 public:
-	RPVManager(RemoteVehicleType, RPVPWMOutputChannel*, RPVInputCaptureChannel*);
+	RPVManager(RPVTypeConfiguration*, RPVPWMOutputChannel*, RPVInputCaptureChannel*);
 	virtual ~RPVManager();
 	void InputCaptureCallback(TIM_HandleTypeDef*);
 private:
-	RemoteVehicleType _vehicleType;
+	RPVTypeConfiguration* _vehicleType;
 	RPVOutputSystem * _outputSystem;
 	RPVRcRXInputCapture * _inputSystem;
 };

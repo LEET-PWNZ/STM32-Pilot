@@ -1,6 +1,6 @@
 #include "RPVRcRXInputCapture.h"
 
-RPVRcRXInputCapture::RPVRcRXInputCapture(RemoteVehicleType vehicleType, RPVInputCaptureChannel* inputCaptureChannels) {
+RPVRcRXInputCapture::RPVRcRXInputCapture(RPVTypeConfiguration* vehicleType, RPVInputCaptureChannel* inputCaptureChannels) {
 	_inputCaptureChannels = inputCaptureChannels;
 	_vehicleType = vehicleType;
 }

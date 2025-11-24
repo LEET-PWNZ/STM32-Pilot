@@ -1,6 +1,6 @@
 #include "RPVManager.h"
 
-RPVManager::RPVManager(RemoteVehicleType vehicleType, RPVPWMOutputChannel* outputChannels, RPVInputCaptureChannel* inputChannels) {
+RPVManager::RPVManager(RPVTypeConfiguration* vehicleType, RPVPWMOutputChannel* outputChannels, RPVInputCaptureChannel* inputChannels) {
 	_vehicleType = vehicleType;
 	_outputSystem = new RPVOutputSystem(vehicleType, outputChannels);
 	_inputSystem = new RPVRcRXInputCapture(vehicleType, inputChannels);

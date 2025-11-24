@@ -1,6 +1,6 @@
 #include "RPVOutputSystem.h"
 
-RPVOutputSystem::RPVOutputSystem(RemoteVehicleType vehicleType, RPVPWMOutputChannel* pwmOutputs) {
+RPVOutputSystem::RPVOutputSystem(RPVTypeConfiguration* vehicleType, RPVPWMOutputChannel* pwmOutputs) {
 	_vehicleType = vehicleType;
 	_outputChannels = pwmOutputs;
 

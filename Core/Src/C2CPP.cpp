@@ -4,29 +4,29 @@
 #include "RPV/RPVBase/RPVShared.h"
 
 RPVManager * rpvMan;
-RPVPWMOutputChannel* outputChannels = new RPVPWMOutputChannel[4];
-RPVInputCaptureChannel* inputChannels = new RPVInputCaptureChannel[5];
-
 
 void C2CPPStartup(TIM_HandleTypeDef *htim2, TIM_HandleTypeDef *htim5, TIM_HandleTypeDef *htim3){
+
+	RPVPWMOutputChannel* outputChannels = new RPVPWMOutputChannel[4];
+	RPVInputCaptureChannel* inputChannels = new RPVInputCaptureChannel[5];
 
 	// Output
 	// Front Left Motor
 	outputChannels[0].Timer = htim3;
 	outputChannels[0].TimerChannel = TIM_CHANNEL_1;
-	outputChannels[0].OutputType = RC_RX_SQUARE_WAVE;
+	outputChannels[0].OutputChannelType = RC_RX_SQUARE_WAVE;
 	// Front Right Motor
 	outputChannels[1].Timer = htim3;
 	outputChannels[1].TimerChannel = TIM_CHANNEL_2;
-	outputChannels[1].OutputType = RC_RX_SQUARE_WAVE;
+	outputChannels[1].OutputChannelType = RC_RX_SQUARE_WAVE;
 	// Rear Left Motor
 	outputChannels[2].Timer = htim3;
 	outputChannels[2].TimerChannel = TIM_CHANNEL_3;
-	outputChannels[2].OutputType = RC_RX_SQUARE_WAVE;
+	outputChannels[2].OutputChannelType = RC_RX_SQUARE_WAVE;
 	// Rear Right Motor
 	outputChannels[3].Timer = htim3;
 	outputChannels[3].TimerChannel = TIM_CHANNEL_4;
-	outputChannels[3].OutputType = RC_RX_SQUARE_WAVE;
+	outputChannels[3].OutputChannelType = RC_RX_SQUARE_WAVE;
 
 	// Input
 	// Roll
@@ -55,7 +55,10 @@ void C2CPPStartup(TIM_HandleTypeDef *htim2, TIM_HandleTypeDef *htim5, TIM_Handle
 	inputChannels[4].GPIOPort = GPIOA;
 	inputChannels[4].GPIOPin = GPIO_PIN_5;
 
-	rpvMan = new RPVManager(RPV_TYPE_MULTI_ROTOR, outputChannels, inputChannels);
+	RPVTypeConfiguration *vehicleTypeInfo = new RPVTypeConfiguration();
+	vehicleTypeInfo->VehicleClass = RPV_TYPE_MULTI_ROTOR;
+
+	rpvMan = new RPVManager(vehicleTypeInfo, outputChannels, inputChannels);
 }
 
 void C2CPPLoop(){

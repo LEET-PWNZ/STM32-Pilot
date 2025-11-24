@@ -6,11 +6,11 @@
 
 class RPVOutputSystem {
 public:
-	RPVOutputSystem(RemoteVehicleType, RPVPWMOutputChannel*);
+	RPVOutputSystem(RPVTypeConfiguration*, RPVPWMOutputChannel*);
 	virtual ~RPVOutputSystem();
 	void UpdateOutputTicks(RPAVControlChannel, uint32_t);
 private:
-	RemoteVehicleType _vehicleType;
+	RPVTypeConfiguration* _vehicleType;
 	RPVPWMOutputChannel* _outputChannels;
 	void updateOutputDuty();
 

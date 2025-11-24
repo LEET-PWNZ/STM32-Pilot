@@ -3,7 +3,7 @@
 
 #include "stm32f4xx_hal.h"
 
-enum RemoteVehicleType{
+enum RPVTypeClass{
 	RPV_TYPE_ROVER = 0,
 	RPV_TYPE_FIXED_WING = 1,
 	RPV_TYPE_HELICOPTER = 2,
@@ -18,7 +18,7 @@ enum RPAVControlChannel{
 	RPV_CTL_AUTOPILOT = 4
 };
 
-enum RPVOutputType{
+enum RPVOutputChannelType{
 	FULL_SQUARE_WAVE = 0,
 	INVERTED_FULL_SQUARE_WAVE = 1,
 	RC_RX_SQUARE_WAVE = 2
@@ -27,11 +27,15 @@ enum RPVOutputType{
 #define RPV_CTL_STEERING RPV_CTL_ROLL
 #define RPV_CTL_GV_THROTTLE RPV_CTL_PITCH
 
+struct RPVTypeConfiguration{
+	RPVTypeClass VehicleClass;
+};
+
 struct RPVPWMOutputChannel{
 	TIM_HandleTypeDef* Timer;
 	uint32_t TimerChannel;
 	uint32_t DutyCycle;
-	RPVOutputType OutputType;
+	RPVOutputChannelType OutputChannelType;
 };
 
 struct RPVInputCaptureChannel{
