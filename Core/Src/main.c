@@ -2,10 +2,11 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "usb_device.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "RPVManager.h"
+#include "C2CPP.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -82,6 +83,7 @@ int main(void)
   MX_TIM2_Init();
   MX_TIM5_Init();
   MX_TIM3_Init();
+  MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
   /* USER CODE END 2 */
 
@@ -90,9 +92,9 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-  RPVStartup(&htim2, &htim5, &htim3);
+  C2CPPStartup(&htim2, &htim5, &htim3);
   while(1){
-	  RPVTick();
+	  C2CPPLoop();
   }
   /* USER CODE END 3 */
 }

@@ -14,8 +14,8 @@
 extern "C" {
 #endif
 
-void RPVStartup(TIM_HandleTypeDef*t2, TIM_HandleTypeDef*t5,TIM_HandleTypeDef*t3);
-void RPVTick();
+void C2CPPStartup(TIM_HandleTypeDef*t2, TIM_HandleTypeDef*t5,TIM_HandleTypeDef*t3);
+void C2CPPLoop();
 
 #ifdef __cplusplus
 }
