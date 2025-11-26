@@ -2,10 +2,12 @@
 
 STM32 Pilot is a Remote Vehicle Piloting tool, allowing remote vehicle operators to map, and (optionally) mix, one or more forms of input, to one or more forms of output. (Sensors, RC receivers, autopilots, gyros etc.)
 
-The signal mixing provides a way for RC pilots with older radios to operate vehicles that their radios don't support natively, by doing the mixing for them (Eg. An airplane radio can be used to fly a quadcopter)
+The signal mixing provides a way for RC pilots with older radios to operate vehicles that their radios don't support natively, by doing the mixing for them on an STM32 (Eg. An airplane radio can be used to fly a quadcopter)
 
 Using STM32 Pilot, a user would connect their RC receiver to the STM32's input channels, and then connect the STM32's output channels to your ESCs and / or servos.
 
+The project is built using STM32 Cube IDE so the .ioc file and much of the boiler-plate code, is pre-configured to have multiple timers enabled for input capture and PWM output.
+The current supported device is an STM32F401CCU6, and the core clock speed is configured at 72Mhz (because using 84Mhz does not allow use of the USB peripheral)
 
 Core functionality will include:
 - Switching vehicle control input source - from RC receiver to Autopilot and vice versa
